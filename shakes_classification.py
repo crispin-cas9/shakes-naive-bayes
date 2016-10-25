@@ -1,5 +1,6 @@
 # Shakespeare play classification
-# Naive Bayes algorithm originally from scikitlearn
+# Naive Bayes algorithm originally from scikitlearn:
+# http://scikit-learn.org/stable/modules/naive_bayes.html
 
 # import all the naive bayes stuff
 from sklearn.feature_extraction.text import CountVectorizer
@@ -78,30 +79,6 @@ term_freq = term_freq_transformer.fit_transform(word_vector_counts)
 
 # Train the Naive Bayes model
 model = MultinomialNB().fit(term_freq, classes)
-
-# tests: classify lines/words as comedy/history/tragedy
-new_lines = {
-	'few love to hear the sins they love to act': 0,
-	'we are such stuff as dreams are made on': 1,
-	'i will make the statue move indeed': 1,
-	'what have we here? a man, or a fish?': 1,
-	'the queen, the queen! the sweetest, dearest creature is dead!': 2,
-	'or to take arms against a sea of troubles': 2,
-    'there is special providence in the fall of a sparrow': 0,
-    'i am justly killed with my own treachery': 0,
-    'o that this too too sullied flesh would melt': 0,
-    'the time is out of joint, o cursed spite': 0,
-    'words without thoughts never to heaven go': 2,
-    'give me that man that is not passions slave': 1,
-    'too much of water hast thou, poor ophelia': 0,
-    'show thy valor and put up thy sword': 2,
-    'or close the wall up with our english dead': 2,
-    'there is very excellent services committed at the bridge': 2,
-    'an absolute gentleman, full of most excellent differences': 1,
-    'ay, i praise god, and i have merited some love at his hands': 1,}
-
-word_dict = {'dead': 0, 'love': 1, 'crown': 2, 'king': 2, 'laugh': 1, 'drunk': 1, 'stab': 0, 
-	'blood': 0, 'die': 0, 'battle': 2, 'kill': 0, 'rich': 1, 'magic': 1, 'mad': 1, 'wine': 1}
 
 # dictionary of the plays I'm trying to classify: their name, content, and correct class
 test_play_dict = {"Timon of Athens":[timon, 0], "Antony and Cleopatra":[a_and_c, 0],
