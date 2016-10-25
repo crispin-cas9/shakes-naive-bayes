@@ -52,20 +52,22 @@ plays = {"Hamlet":[0, 'http://shakespeare.mit.edu/hamlet/full.html'],
     "King John":[2, 'http://shakespeare.mit.edu/john/full.html'],
     "Henry VIII":[2, 'http://shakespeare.mit.edu/henryviii/full.html']}
 
-classes = [plays[key][0] for key in plays]
 class_names = {0:'tragedy', 1:'comedy', 2:'history'}
 
 # process the data
 
+play_data = []
+classes = []
+
 for key in plays:
-    url = [plays[key][1]
+    url = plays[key][1]
     raw_data = urllib2.urlopen(url).read().lower().split("<h3>")
     processed = [re.sub('(\\n)', ' ', section) for section in raw_data]
     processed = [re.sub('(<.+?>)', ' ', section) for section in processed]
     processed = [re.sub('(\s+)', ' ', section) for section in processed]
     plays[key].append(processed)
-
-play_data = [plays[key][2] for key in plays]
+    play_data.extend(plays[key][2])
+    classes.extend([plays[key][0] for section in processed])
 
 word_vector = CountVectorizer()
 word_vector_counts = word_vector.fit_transform(play_data)
@@ -104,7 +106,7 @@ word_dict = {'dead': 0, 'love': 1, 'crown': 2, 'king': 2, 'laugh': 1, 'drunk': 1
 
 
 # take the texts and figure out the frequencies of the words
-test_line = [new_lines[key][0] for key in new_lines]
+test_line = new_lines.keys()
 new_counts = word_vector.transform(test_line)
 new_term_freq = term_freq_transformer.transform(new_counts)
 
@@ -126,7 +128,7 @@ print 'Probabilities:'
 print probabilities
 print ' '
 
-# Validation!!
+# Validation
 
 print 'Validation:'
 ncorrect = 0
