@@ -11,4 +11,4 @@ sudo pip install scikit-learn
 
 Run the file: python shakes_classification.py
 
-Based on algorithms from scikitlearn. Shakespeare play texts are from http://shakespeare.mit.edu/ .
+Based on example code written by my Machine Learning teacher, which I then modified. Naive Bayes algorithms are from scikitlearn -- more info here: http://scikit-learn.org/stable/modules/naive_bayes.html . Shakespeare play texts are from http://shakespeare.mit.edu/ .
