@@ -1,4 +1,5 @@
 # Shakespeare play classification
+# splits plays into sections
 # Naive Bayes algorithm originally from scikitlearn:
 # http://scikit-learn.org/stable/modules/naive_bayes.html
 
@@ -10,6 +11,10 @@ from sklearn.naive_bayes import MultinomialNB
 # import regex and url reader
 import re
 import urllib2
+
+import datetime
+
+startscript = datetime.datetime.now()
 
 # import the data -- the plays I'm training the model on
 # tell the model which play is in which class
@@ -41,13 +46,13 @@ plays = {"Hamlet":[0, 'http://shakespeare.mit.edu/hamlet/full.html'],
     "Antony and Cleopatra":[0, 'http://shakespeare.mit.edu/cleopatra/full.html'],
     "Two Gentlemen of Verona":[1, 'http://shakespeare.mit.edu/two_gentlemen/full.html'],
     "The Tempest":[1, 'http://shakespeare.mit.edu/tempest/full.html'],
-    "Cymbeline":[1, 'http://shakespeare.mit.edu/cymbeline/full.html'],
+#    "Cymbeline":[1, 'http://shakespeare.mit.edu/cymbeline/full.html'],
     "Pericles":[1, 'http://shakespeare.mit.edu/pericles/full.html'],
     "Merchant of Venice":[1, 'http://shakespeare.mit.edu/merchant/full.html'],
     "Measure for Measure":[1, 'http://shakespeare.mit.edu/measure/full.html'],
     "Taming of the Shrew":[1, 'http://shakespeare.mit.edu/taming_shrew/full.html'],
     "Winter's Tale":[1, 'http://shakespeare.mit.edu/winters_tale/full.html'],
-    "Troilus and Cressida":[1, 'http://shakespeare.mit.edu/troilus_cressida/full.html'],
+#    "Troilus and Cressida":[1, 'http://shakespeare.mit.edu/troilus_cressida/full.html'],
     "Richard II":[2, 'http://shakespeare.mit.edu/richardii/full.html'],
     "King John":[2, 'http://shakespeare.mit.edu/john/full.html'],
     "Henry VIII":[2, 'http://shakespeare.mit.edu/henryviii/full.html']}
@@ -68,6 +73,11 @@ for key in plays:
     plays[key].append(processed)
     play_data.extend(plays[key][2])
     classes.extend([plays[key][0] for section in processed])
+
+endscript = datetime.datetime.now()
+
+difference = endscript - startscript
+print "It took " + str(difference.seconds) + " seconds to load the data."
 
 word_vector = CountVectorizer()
 word_vector_counts = word_vector.fit_transform(play_data)
@@ -94,12 +104,12 @@ new_lines = {
     'the time is out of joint, o cursed spite': 0,
     'words without thoughts never to heaven go': 2,
     'give me that man that is not passions slave': 1,
-    'too much of water hast thou, poor ophelia': 0,
+    'i have a speech of fire that fain would blaze': 0,
     'show thy valor and put up thy sword': 2,
     'or close the wall up with our english dead': 2,
     'there is very excellent services committed at the bridge': 2,
     'an absolute gentleman, full of most excellent differences': 1,
-    'ay, i praise god, and i have merited some love at his hands': 1,}
+    'ay, i praise god, and i have merited some love at his hands': 1}
 
 word_dict = {'dead': 0, 'love': 1, 'crown': 2, 'king': 2, 'laugh': 1, 'drunk': 1, 'stab': 0, 
     'blood': 0, 'die': 0, 'battle': 2, 'kill': 0, 'rich': 1, 'magic': 1, 'mad': 1, 'wine': 1}
@@ -116,10 +126,10 @@ print ' '
 print 'Predictions:'
     
 for key, prediction in zip(new_lines, predicted): 
-    new_lines[key].append(prediction)
+    new_lines[key] = [new_lines[key], prediction]
 
 for item in new_lines:
-    predicted_play_class = new_lines[item][2]
+    predicted_play_class = new_lines[item][1]
     print item + " => " + class_names[predicted_play_class]
 
 probabilities = model.predict_proba(new_term_freq)
@@ -134,7 +144,7 @@ print 'Validation:'
 ncorrect = 0
 
 # take the correct play classes from the dictionary
-correct_play_classes = [new_lines[key][1] for key in new_lines]
+correct_play_classes = [new_lines[key][0] for key in new_lines]
 
 # for each predicted class, compare it to the correct class
 # count the number of predictions that the model got correct
