@@ -14,8 +14,6 @@ import urllib2
 
 import datetime
 
-startscript = datetime.datetime.now()
-
 # import the data -- the plays I'm training the model on
 # tell the model which play is in which class
 
@@ -155,7 +153,10 @@ for prediction, truth in zip(predicted, correct_play_classes):
 
 # based on the number of correct guesses and the number of plays overall, print the
 #  percentage the model got correct
+
+pcorrect = (ncorrect / float(len(correct_play_classes))) * 100
+
 print ' '
-print "The model got " + str((ncorrect / float(len(correct_play_classes))) * 100) + "% of its predictions correct."
+print "The model got " + str(pcorrect) + "% of its predictions correct."
 print ' '
 
