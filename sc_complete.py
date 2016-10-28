@@ -10,9 +10,8 @@ from sklearn.naive_bayes import MultinomialNB
 import re
 import urllib2
 import os.path
-import datetime
 
-# import the data -- the plays I'm training the model on
+# import the data
 
 # tragedies
 hamlet = open ('shakes_data/hamlet.txt').read().lower()
@@ -60,9 +59,7 @@ richard_ii = open ('shakes_data/richard_ii.txt').read().lower()
 john = open ('shakes_data/john.txt').read().lower()
 henry_viii = open ('shakes_data/henry_viii.txt').read().lower()
 
-
 class_names = {0:'tragedy', 1:'comedy', 2:'history'}
-
 
 htmlplays = {"Hamlet":[0, 'http://shakespeare.mit.edu/hamlet/full.html'],
     "Macbeth":[0, 'http://shakespeare.mit.edu/macbeth/full.html'],
@@ -147,7 +144,7 @@ def txttrain():
 
 	model = MultinomialNB().fit(term_freq, classes)
 
-def secttrain():
+def htmltrain():
 
 	play_data = []
 	classes = []
@@ -168,11 +165,6 @@ def secttrain():
 		play_data.extend(htmlplays[key][2])
 		classes.extend([htmlplays[key][0] for section in processed])
 
-	endscript = datetime.datetime.now()
-
-	difference = endscript - startscript
-	print "It took " + str(difference.seconds) + " seconds to load the data."
-
 	word_vector = CountVectorizer()
 	word_vector_counts = word_vector.fit_transform(play_data)
 
@@ -181,7 +173,7 @@ def secttrain():
 
 	model = MultinomialNB().fit(term_freq, classes)
 
-def play():
+def plays():
 
 	test_play_dict = {"Timon of Athens":[timon, 0], "Antony and Cleopatra":[a_and_c, 0],
 		"Two Gentlemen of Verona":[two_gentlemen, 1], "The Tempest":[tempest, 1],
@@ -241,8 +233,8 @@ def lines():
 		new_lines[key] = [new_lines[key], prediction]
 
 	for item in new_lines:
-		predicted_play_class = new_lines[item][1]
-		print item + " => " + class_names[predicted_play_class]
+		predicted_line_class = new_lines[item][1]
+		print item + " => " + class_names[predicted_line_class]
 
 	probabilities = model.predict_proba(new_term_freq)
 	print ' '
@@ -253,14 +245,14 @@ def lines():
 	print 'Validation:'
 	ncorrect = 0
 
-	correct_play_classes = [new_lines[key][0] for key in new_lines]
+	correct_line_classes = [new_lines[key][0] for key in new_lines]
 
-	for prediction, truth in zip(predicted, correct_play_classes):
+	for prediction, truth in zip(predicted, correct_line_classes):
 		print "Prediction: {}, Truth: {}".format(prediction, truth)
 		if prediction == truth:
 			ncorrect = ncorrect + 1
 
-	pcorrect = (ncorrect / float(len(correct_play_classes))) * 100
+	pcorrect = (ncorrect / float(len(correct_line_classes))) * 100
 
 	print ' '
 	print "The model got " + str(pcorrect) + "% of its predictions correct."
@@ -268,7 +260,7 @@ def lines():
 
 def words():
 
-	test_line = word_dict.keys()
+	test_word = word_dict.keys()
 	new_counts = word_vector.transform(test_line)
 	new_term_freq = term_freq_transformer.transform(new_counts)
 
@@ -280,8 +272,8 @@ def words():
 		word_dict[key] = [word_dict[key], prediction]
 
 	for item in word_dict:
-		predicted_play_class = word_dict[item][1]
-		print item + " => " + class_names[predicted_play_class]
+		predicted_word_class = word_dict[item][1]
+		print item + " => " + class_names[predicted_word_class]
 
 	probabilities = model.predict_proba(new_term_freq)
 	print ' '
@@ -292,18 +284,19 @@ def words():
 	print 'Validation:'
 	ncorrect = 0
 
-	correct_play_classes = [word_dict[key][0] for key in word_dict]
+	correct_line_classes = [word_dict[key][0] for key in word_dict]
 
-	for prediction, truth in zip(predicted, correct_play_classes):
+	for prediction, truth in zip(predicted, correct_word_classes):
 		print "Prediction: {}, Truth: {}".format(prediction, truth)
 		if prediction == truth:
 			ncorrect = ncorrect + 1
 
-	pcorrect = (ncorrect / float(len(correct_play_classes))) * 100
+	pcorrect = (ncorrect / float(len(correct_word_classes))) * 100
 
 	print ' '
 	print "The model got " + str(pcorrect) + "% of its predictions correct."
 	print ' '
 
-
+txttrain()
+plays()
 
