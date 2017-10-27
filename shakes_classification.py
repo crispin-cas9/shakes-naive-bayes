@@ -9,63 +9,21 @@ from sklearn.naive_bayes import MultinomialNB
 
 # import the data -- the plays I'm training the model on
 
-# tragedies
-hamlet = open ('shakes_data/hamlet.txt').read().lower()
-macbeth = open ('shakes_data/macbeth.txt').read().lower()
-othello = open ('shakes_data/othello.txt').read().lower()
-king_lear = open ('shakes_data/king_lear.txt').read().lower()
-r_and_j = open ('shakes_data/r_and_j.txt').read().lower()
-titus = open ('shakes_data/titus.txt').read().lower()
-julius_caesar = open ('shakes_data/julius_caesar.txt').read().lower()
-coriolanus = open ('shakes_data/coriolanus.txt').read().lower()
+# dictionary of plays: their name, file name, and correct class
+plays = {"Hamlet":['hamlet', 0], "Macbeth":['macbeth', 0], "Othello":['othello', 0], "King Lear":['king_lear', 0], "Romeo and Juliet":['r_and_j', 0], "Titus Andronicus":['titus', 0], "Julius Caesar":['julius_caesar', 0], "Coriolanus":['coriolanus', 0], "Midsummer Night's Dream":['midsummer', 1], "Much Ado About Nothing":['much_ado', 1], "Twelfth Night":['twelfth_night', 1], "As You Like It":['as_you_like_it', 1], "Comedy of Errors":['comedy_of_errors', 1], "All's Well that Ends Well":['alls_well', 1], "Love's Labors Lost":['loves_labors', 1], "Merry Wives of Windsor":['merry_wives', 1], "Henry V":['henry_v', 2], "Richard II":['richard_iii', 2], "Henry IV part 1":['henry_iv_1', 2], "Henry IV part 2":['henry_iv_2', 2], "Henry VI part 1":['henry_vi_1', 2], "Henry VI part 2":['henry_vi_2', 2], "Henry VI part 3":['henry_vi_3', 2]}
 
-timon = open ('shakes_data/timon.txt').read().lower()
-a_and_c = open ('shakes_data/a_and_c.txt').read().lower()
+# dictionary of the plays I'm trying to classify
+test_plays = {"Timon of Athens":['timon', 0], "Antony and Cleopatra":['a_and_c', 0], "Two Gentlemen of Verona":['two_gentlemen', 1], "The Tempest":['tempest', 1], "Cymbeline":['cymbeline', 1], "Pericles":['pericles', 1], "Merchant of Venice":['merchant', 1], "Measure for Measure":['measure', 1], "Taming of the Shrew":['shrew', 1], "Winter's Tale":['winters_tale', 1], "Troilus and Cressida":['t_and_c', 1], "Richard II":['richard_ii', 2], "King John":['john', 2], "Henry VIII":['henry_viii', 2], "King Leir":['leir', 1]}
 
-# comedies
-midsummer = open ('shakes_data/midsummer.txt').read().lower()
-much_ado = open ('shakes_data/much_ado.txt').read().lower()
-twelfth_night = open ('shakes_data/twelfth_night.txt').read().lower()
-as_you_like_it = open ('shakes_data/as_you_like_it.txt').read().lower()
-comedy_of_errors = open ('shakes_data/comedy_of_errors.txt').read().lower()
-alls_well = open ('shakes_data/alls_well.txt').read().lower()
-loves_labors = open ('shakes_data/loves_labors.txt').read().lower()
-merry_wives = open ('shakes_data/merry_wives.txt').read().lower()
+for play in plays:
+	shortname = plays[play][0]
+	plays[play].append(open ('shakes_data/' + shortname + '.txt').read().lower())
 
-two_gentlemen = open ('shakes_data/two_gentlemen.txt').read().lower()
-tempest = open ('shakes_data/tempest.txt').read().lower()
-cymbeline = open ('shakes_data/cymbeline.txt').read().lower()
-pericles = open ('shakes_data/pericles.txt').read().lower()
-merchant = open ('shakes_data/merchant.txt').read().lower()
-measure = open ('shakes_data/measure.txt').read().lower()
-shrew = open ('shakes_data/shrew.txt').read().lower()
-winters_tale = open ('shakes_data/winters_tale.txt').read().lower()
-t_and_c = open ('shakes_data/t_and_c.txt').read().lower()
+for play in test_plays:
+	shortname = test_plays[play][0]
+	test_plays[play].append(open ('shakes_data/' + shortname + '.txt').read().lower())
 
-# histories
-henry_v = open ('shakes_data/henry_v.txt').read().lower()
-richard_iii = open ('shakes_data/richard_iii.txt').read().lower()
-henry_iv_1 = open ('shakes_data/henry_iv_1.txt').read().lower()
-henry_iv_2 = open ('shakes_data/henry_iv_2.txt').read().lower()
-henry_vi_1 = open ('shakes_data/henry_vi_1.txt').read().lower()
-henry_vi_2 = open ('shakes_data/henry_vi_2.txt').read().lower()
-henry_vi_3 = open ('shakes_data/henry_vi_3.txt').read().lower()
-
-richard_ii = open ('shakes_data/richard_ii.txt').read().lower()
-john = open ('shakes_data/john.txt').read().lower()
-henry_viii = open ('shakes_data/henry_viii.txt').read().lower()
-
-# tell the model which play is in which class
-plays = {"Hamlet":[hamlet, 0], "Macbeth":[macbeth, 0], "Othello":[othello, 0], "King Lear":[king_lear, 0],
-	"Romeo and Juliet":[r_and_j, 0], "Titus Andronicus":[titus, 0], "Julius Caesar":[julius_caesar, 0],
-	"Coriolanus":[coriolanus, 0], "Midsummer Night's Dream":[midsummer, 1], "Much Ado About Nothing":[much_ado, 1],
-	"Twelfth Night":[twelfth_night, 1], "As You Like It":[as_you_like_it, 1], "Comedy of Errors":[comedy_of_errors, 1],
-	"All's Well that Ends Well":[alls_well, 1], "Love's Labors Lost":[loves_labors, 1],
-	"Merry Wives of Winsor":[merry_wives, 1], "Henry V":[henry_v, 2], "Richard II":[richard_iii, 2],
-	"Henry IV part 1":[henry_iv_1, 2], "Henry IV part 2":[henry_iv_2, 2], "Henry VI part 1":[henry_vi_1, 2],
-	"Henry VI part 2":[henry_vi_2, 2], "Henry VI part 3":[henry_vi_3, 2]}
-
-play_data = [plays[key][0] for key in plays]
+play_data = [plays[key][2] for key in plays]
 classes = [plays[key][1] for key in plays]
 class_names = {0:'tragedy', 1:'comedy', 2:'history'}
 
@@ -80,16 +38,8 @@ term_freq = term_freq_transformer.fit_transform(word_vector_counts)
 # Train the Naive Bayes model
 model = MultinomialNB().fit(term_freq, classes)
 
-# dictionary of the plays I'm trying to classify: their name, content, and correct class
-test_play_dict = {"Timon of Athens":[timon, 0], "Antony and Cleopatra":[a_and_c, 0],
-	"Two Gentlemen of Verona":[two_gentlemen, 1], "The Tempest":[tempest, 1],
-	"Cymbeline":[cymbeline, 1], "Pericles":[pericles, 1], "Merchant of Venice":[merchant, 1],
-	"Measure for Measure":[measure, 1], "Taming of the Shrew":[shrew, 1],
-	"Winter's Tale":[winters_tale, 1], "Troilus and Cressida":[t_and_c, 1],
-	"Richard II":[richard_ii, 2], "King John":[john, 2], "Henry VIII":[henry_viii, 2]}
-
 # take the texts and figure out the frequencies of the words
-test_play = [test_play_dict[key][0] for key in test_play_dict]
+test_play = [test_plays[key][2] for key in test_plays]
 new_counts = word_vector.transform(test_play)
 new_term_freq = term_freq_transformer.transform(new_counts)
 
@@ -98,12 +48,12 @@ predicted = model.predict(new_term_freq)
 print ' '
 print 'Predictions:'
 	
-for key, prediction in zip(test_play_dict, predicted): 
-	test_play_dict[key].append(prediction)
+for key, prediction in zip(test_plays, predicted): 
+	test_plays[key].append(prediction)
 
-for item in test_play_dict:
-	predicted_play_class = test_play_dict[item][2]
-	print item + " => " + class_names[predicted_play_class]
+for play in test_plays:
+	predicted_play_class = test_plays[play][3]
+	print play + " => " + class_names[predicted_play_class]
 
 probabilities = model.predict_proba(new_term_freq)
 print ' '
@@ -117,7 +67,7 @@ print 'Validation:'
 ncorrect = 0
 
 # take the correct play classes from the dictionary
-correct_play_classes = [test_play_dict[key][1] for key in test_play_dict]
+correct_play_classes = [test_plays[key][1] for key in test_plays]
 
 # for each predicted class, compare it to the correct class
 # count the number of predictions that the model got correct
